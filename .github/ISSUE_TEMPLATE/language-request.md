@@ -1,8 +1,15 @@
-On requesting new languages
-===========================
+---
+name: Language request
+about: I really wish Highlight.js could highlight ...
+title: PLEASE read the below carefully.
+labels: ''
+assignees: ''
 
-This is a general answer to requests for adding new languages that appear from
-time to time in the highlight.js issue tracker and discussion group.
+---
+
+First let us say that we'd also love it if Highlight.js could highlight whichever language you're about to request support for!  And there is a chance you can help make that happen! But first...
+
+...PLEASE READ THE FOLLOWING...
 
     Highlight.js does not have a fundamental plan for implementing new languages
     - i.e., the core team doesn't usually develop new languages. The core team
@@ -13,7 +20,7 @@ time to time in the highlight.js issue tracker and discussion group.
     Instead, the project works by encouraging 3rd party language grammars from
     contributors willing to help develop and maintain them. We're also happy to
     host those 3rd party language grammars at the ``highlightjs`` GitHub
-    organization - no matter how obscure or weird. Or you're welcome to host it
+    organization - no matter how obscure or weird. Or you're wlecome to host it
     yourself - we're still happy to link to it.
 
     This means that *there's no point in requesting a new language without also
@@ -26,3 +33,10 @@ time to time in the highlight.js issue tracker and discussion group.
     and for information on how to properly package your 3rd party language module
     see :doc:`language-contribution`.
 
+If you are interested in contributing a 3rd party language grammar you can start with: 
+
+- https://highlightjs.readthedocs.io/en/latest/language-contribution.html
+
+---
+
+You actually don't need to create this issue at all unless you have a specific question about the 3rd party language grammar creation process - which we'd be glad to answer.

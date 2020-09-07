@@ -3,14 +3,15 @@ Syntax highlighting with language autodetection.
 https://highlightjs.org/
 */
 
-import deepFreeze from './vendor/deep_freeze';
-import Response from './lib/response';
-import TokenTreeEmitter from './lib/token_tree';
-import * as regex from './lib/regex';
-import * as utils from './lib/utils';
-import * as MODES from './lib/modes';
-import { compileLanguage } from './lib/mode_compiler';
+import deepFreeze from './vendor/deep_freeze.js';
+import Response from './lib/response.js';
+import TokenTreeEmitter from './lib/token_tree.js';
+import * as regex from './lib/regex.js';
+import * as utils from './lib/utils.js';
+import * as MODES from './lib/modes.js';
+import { compileLanguage } from './lib/mode_compiler.js';
 import * as packageJSON from '../package.json';
+import { VuePlugin } from "./plugins/vue";
 
 const escape = utils.escapeHTML;
 const inherit = utils.inherit;
@@ -20,6 +21,7 @@ const NO_MATCH = Symbol("nomatch");
 
 /**
  * @param {any} hljs - object that is extended (legacy)
+ * @returns {HLJSApi}
  */
 const HLJS = function(hljs) {
   // Convenience variables for build-in objects
@@ -28,9 +30,9 @@ const HLJS = function(hljs) {
 
   // Global internal variables used within the highlight.js library.
   /** @type {Record<string, Language>} */
-  var languages = {};
+  var languages = Object.create(null);
   /** @type {Record<string, string>} */
-  var aliases = {};
+  var aliases = Object.create(null);
   /** @type {HLJSPlugin[]} */
   var plugins = [];
 
@@ -260,6 +262,14 @@ const HLJS = function(hljs) {
     }
 
     /**
+     * Advance a single character
+     */
+    function advanceOne() {
+      mode_buffer += codeToHighlight[index];
+      index += 1;
+    }
+
+    /**
      * Handle matching but then ignoring a sequence of text
      *
      * @param {string} lexeme - string containing full match text
@@ -273,7 +283,7 @@ const HLJS = function(hljs) {
       } else {
         // no need to move the cursor, we still have additional regexes to try and
         // match at this very spot
-        continueScanAtSamePosition = true;
+        resumeScanAtSamePosition = true;
         return 0;
       }
     }
@@ -476,23 +486,32 @@ const HLJS = function(hljs) {
     var relevance = 0;
     var index = 0;
     var iterations = 0;
-    var continueScanAtSamePosition = false;
+    var resumeScanAtSamePosition = false;
 
     try {
       top.matcher.considerAll();
 
       for (;;) {
         iterations++;
-        if (continueScanAtSamePosition) {
+        if (resumeScanAtSamePosition) {
           // only regexes not matched previously will now be
           // considered for a potential match
-          continueScanAtSamePosition = false;
+          resumeScanAtSamePosition = false;
         } else {
           top.matcher.lastIndex = index;
           top.matcher.considerAll();
         }
+
         const match = top.matcher.exec(codeToHighlight);
         // console.log("match", match[0], match.rule && match.rule.begin)
+
+        // if our failure to match was the result of a "resumed scan" then we
+        // need to advance one position and revert to full scanning before we
+        // decide there are truly no more matches at all to be had
+        if (!match && top.matcher.resumingScanAtSamePosition()) {
+          advanceOne();
+          continue;
+        }
         if (!match) break;
 
         const beforeMatch = codeToHighlight.substring(index, match.index);
@@ -684,7 +703,7 @@ const HLJS = function(hljs) {
       language: result.language,
       // TODO: remove with version 11.0
       re: result.relevance,
-      relavance: result.relevance,
+      relavance: result.relevance
     };
     if (result.second_best) {
       element.second_best = {
@@ -829,12 +848,19 @@ const HLJS = function(hljs) {
     });
   }
 
-  /* Interface definition */
+  /* fixMarkup is deprecated and will be removed entirely in v11 */
+  function deprecate_fixMarkup(arg) {
+    console.warn("fixMarkup is deprecated and will be removed entirely in v11.0")
+    console.warn("Please see https://github.com/highlightjs/highlight.js/issues/2534")
 
+    return fixMarkup(arg)
+  }
+
+  /* Interface definition */
   Object.assign(hljs, {
     highlight,
     highlightAuto,
-    fixMarkup,
+    fixMarkup: deprecate_fixMarkup,
     highlightBlock,
     configure,
     initHighlighting,
@@ -846,7 +872,9 @@ const HLJS = function(hljs) {
     requireLanguage,
     autoDetection,
     inherit,
-    addPlugin
+    addPlugin,
+    // plugins for frameworks
+    vuePlugin: VuePlugin
   });
 
   hljs.debugMode = function() { SAFE_MODE = false; };

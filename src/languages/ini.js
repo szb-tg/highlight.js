@@ -6,6 +6,8 @@ Category: common, config
 Website: https://github.com/toml-lang/toml
 */
 
+import * as regex from '../lib/regex.js';
+
 export default function(hljs) {
   var NUMBERS = {
     className: 'number',
@@ -54,6 +56,17 @@ export default function(hljs) {
     relevance:0
   };
 
+  var BARE_KEY = /[A-Za-z0-9_-]+/;
+  var QUOTED_KEY_DOUBLE_QUOTE = /"(\\"|[^"])*"/;
+  var QUOTED_KEY_SINGLE_QUOTE = /'[^']*'/;
+  var ANY_KEY = regex.either(
+    BARE_KEY, QUOTED_KEY_DOUBLE_QUOTE, QUOTED_KEY_SINGLE_QUOTE
+  );
+  var DOTTED_KEY = regex.concat(
+    ANY_KEY, '(\\s*\\.\\s*', ANY_KEY, ')*',
+    regex.lookahead(/\s*=\s*[^#\s]/)
+  );
+
   return {
     name: 'TOML, also INI',
     aliases: ['toml'],
@@ -66,7 +79,7 @@ export default function(hljs) {
         begin: /\[+/, end: /\]+/
       },
       {
-        begin: /^[a-z0-9\[\]_\.-]+(?=\s*=\s*)/,
+        begin: DOTTED_KEY,
         className: 'attr',
         starts: {
           end: /$/,

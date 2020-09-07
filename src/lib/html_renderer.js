@@ -1,4 +1,4 @@
-import { escapeHTML } from './utils';
+import { escapeHTML } from './utils.js';
 
 /**
  * @typedef {object} Renderer
@@ -84,5 +84,4 @@ export default class HTMLRenderer {
   span(className) {
     this.buffer += `<span class="${className}">`;
   }
-
 }

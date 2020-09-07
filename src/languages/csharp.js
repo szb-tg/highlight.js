@@ -13,7 +13,7 @@ export default function(hljs) {
       // Normal keywords.
       'abstract as base bool break byte case catch char checked const continue decimal ' +
       'default delegate do double enum event explicit extern finally fixed float ' +
-      'for foreach goto if implicit in int interface internal is lock long ' +
+      'for foreach goto if implicit in init int interface internal is lock long ' +
       'object operator out override params private protected public readonly ref sbyte ' +
       'sealed short sizeof stackalloc static string struct switch this try typeof ' +
       'uint ulong unchecked unsafe ushort using virtual void volatile while ' +
@@ -91,7 +91,10 @@ export default function(hljs) {
   var GENERIC_MODIFIER = {
     begin: "<",
     end: ">",
-    keywords: "in out"
+    contains: [ 
+      { beginKeywords: "in out"},
+      TITLE_MODE 
+    ]
   };
   var TYPE_IDENT_RE = hljs.IDENT_RE + '(<' + hljs.IDENT_RE + '(\\s*,\\s*' + hljs.IDENT_RE + ')*>)?(\\[\\])?';
   var AT_IDENTIFIER = {
@@ -162,6 +165,16 @@ export default function(hljs) {
         ]
       },
       {
+        beginKeywords: 'record', end: /[{;=]/,
+        illegal: /[^\s:]/,
+        contains: [
+          TITLE_MODE,
+          GENERIC_MODIFIER,
+          hljs.C_LINE_COMMENT_MODE,
+          hljs.C_BLOCK_COMMENT_MODE
+        ]
+      },
+      {
         // [Attributes("")]
         className: 'meta',
         begin: '^\\s*\\[', excludeBegin: true, end: '\\]', excludeEnd: true,
@@ -177,13 +190,16 @@ export default function(hljs) {
       },
       {
         className: 'function',
-        begin: '(' + TYPE_IDENT_RE + '\\s+)+' + hljs.IDENT_RE + '\\s*\\(', returnBegin: true,
+        begin: '(' + TYPE_IDENT_RE + '\\s+)+' + hljs.IDENT_RE + '\\s*(\\<.+\\>)?\\s*\\(', returnBegin: true,
         end: /\s*[{;=]/, excludeEnd: true,
         keywords: KEYWORDS,
         contains: [
           {
-            begin: hljs.IDENT_RE + '\\s*\\(', returnBegin: true,
-            contains: [hljs.TITLE_MODE],
+            begin: hljs.IDENT_RE + '\\s*(\\<.+\\>)?\\s*\\(', returnBegin: true,
+            contains: [
+              hljs.TITLE_MODE,
+              GENERIC_MODIFIER
+            ],
             relevance: 0
           },
           {

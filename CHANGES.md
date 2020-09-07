@@ -1,4 +1,57 @@
-## Version 10.1.0 (in progress)
+## Version 10.2.0 (next up)
+
+Parser Engine:
+
+- (fix) When ignoring a potential match highlighting can terminate early (#2649) [Josh Goebel][]
+
+New themes:
+
+- *Gradient Light* by [Samia Ali]()
+
+Deprecations:
+
+- `fixMarkup` is now deprecated and will be removed in v11.0. (#2534) [Josh Goebel][]
+
+Big picture:
+
+- Add simple Vue plugin for basic use cases (#2544) [Josh Goebel][]
+
+Language Improvements:
+
+- fix(bash) Fewer false positives for keywords in arguments (#2669) [sirosen][]
+- fix(js) Prevent long series of /////// from causing freezes (#2656) [Josh Goebel][]
+- enh(csharp) Add `init` and `record` keywords for C# 9.0 (#2660) [Youssef Victor][]
+- enh(matlab) Add new R2019b `arguments` keyword and fix `enumeration` keyword (#2619) [Andrew Janke][]
+- fix(kotlin) Remove very old keywords and update example code (#2623) [kageru][]
+- fix(night) Prevent object prototypes method values from being returned in `getLanguage` (#2636) [night][]
+- enh(java) Add support for `enum`, which will identify as a `class` now (#2643) [ezksd][]
+- enh(nsis) Add support for NSIS 3.06 commands (#2653) [idleberg][]
+- enh(php) detect newer more flexible HEREdoc syntax (#2658) [eytienne][]
+
+[Youssef Victor]: https://github.com/Youssef1313
+[Josh Goebel]: https://github.com/yyyc514
+[Andrew Janke]: https://github.com/apjanke
+[Samia Ali]: https://github.com/samiaab1990
+[kageru]: https://github.com/kageru
+[night]: https://github.com/night
+[ezksd]: https://github.com/ezksd
+[idleberg]: https://github.com/idleberg
+[eytienne]: https://github.com/eytienne
+[sirosen]: https://github.com/sirosen
+
+
+## Version 10.1.1
+
+Fixes:
+
+- Resolve issue on Node 6 due to dangling comma (#2608) [Edwin Hoogerbeets][]
+- Resolve `index.d.ts is not a module` error (#2603) [Josh Goebel][]
+
+[Josh Goebel]: https://github.com/yyyc514
+[Edwin Hoogerbeets]: https://github.com/ehoogerbeets
+
+
+## Version 10.1.0
 
 New themes:
 
@@ -44,9 +97,11 @@ Language Improvements:
 - fix(typescript) `=>` function with nested `()` in params now works (#2502) [Josh Goebel][]
 - fix(yaml) Fix tags to include non-word characters (#2486) [Peter Plantinga][]
 - fix(swift) `@objcMembers` was being partially highlighted (#2543) [Nick Randall][]
-- enh(dart) Add `late` and `required` keywords, and `Never` built-in type (#2550) [Sam Rawlins][]
+- enh(dart) Add `late` and `required` keywords, the `Never` built-in type, and nullable built-in types (#2550) [Sam Rawlins][]
 - enh(erlang) Add underscore separators to numeric literals (#2554) [Sergey Prokhorov][]
 - enh(handlebars) Support for sub-expressions, path-expressions, hashes, block-parameters and literals (#2344) [Nils Knappmeier][]
+- enh(protobuf) Support multiline comments (#2597) [Pavel Evstigneev][]
+- fix(toml) Improve key parsing (#2595) [Antoine du Hamel][]
 
 [Josh Goebel]: https://github.com/yyyc514
 [Peter Plantinga]: https://github.com/pplantinga
@@ -60,6 +115,8 @@ Language Improvements:
 [Martin (Lhoerion)]: https://github.com/Lhoerion
 [Jim Mason]: https://github.com/RocketMan
 [lioshi]: https://github.com/lioshi
+[Pavel Evstigneev]: https://github.com/Paxa
+[Antoine du Hamel]: https://github.com/aduh95
 
 
 ## Version 10.0.2

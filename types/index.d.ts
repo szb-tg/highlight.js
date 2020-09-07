@@ -1,9 +1,18 @@
+// For TS consumers who use Node and don't have dom in their tsconfig lib, import the necessary types here.
+/// <reference lib="dom" />
+
 /* Public API */
 
 // eslint-disable-next-line
 declare const hljs : HLJSApi;
 
-interface HLJSApi {
+type HLJSApi = PublicApi & ModesAPI
+
+interface VuePlugin {
+    install: (vue: any) => void
+}
+
+interface PublicApi {
     highlight: (languageName: string, code: string, ignoreIllegals?: boolean, continuation?: Mode) => HighlightResult
     highlightAuto: (code: string, languageSubset?: string[]) => AutoHighlightResult
     fixMarkup: (html: string) => string
@@ -22,9 +31,10 @@ interface HLJSApi {
     debugMode: () => void
     safeMode: () => void
     versionString: string
+    vuePlugin: () => VuePlugin
 }
 
-interface HLJSApi {
+interface ModesAPI {
     SHEBANG: (mode?: Partial<Mode> & {binary?: string | RegExp}) => Mode
     BACKSLASH_ESCAPE: Mode
     QUOTE_STRING_MODE: Mode
@@ -43,7 +53,7 @@ interface HLJSApi {
     UNDERSCORE_TITLE_MODE: Mode
     METHOD_GUARD: Mode
     END_SAME_AS_BEGIN: (mode: Mode) => Mode
-    // build in regex
+    // built in regex
     IDENT_RE: string
     UNDERSCORE_IDENT_RE: string
     NUMBER_RE: string
@@ -52,13 +62,7 @@ interface HLJSApi {
     RE_STARTERS_RE: string
 }
 
-type LanguageFn = (hljs: HLJSApi) => Language
-
-// interface RawLanguage {
-//     name?: string
-//     aliases?: string[]
-//     rawDefinition?: () => Language
-// }
+type LanguageFn = (hljs?: HLJSApi) => Language
 
 interface HighlightResult {
     relevance : number
@@ -73,14 +77,12 @@ interface HighlightResult {
     // * for auto-highlight
     second_best? : Omit<HighlightResult, 'second_best'>
 }
+interface AutoHighlightResult extends HighlightResult {}
 
 interface illegalData {
     msg: string
     context: string
     mode: CompiledMode
-}
-
-interface AutoHighlightResult extends HighlightResult {
 }
 
 type PluginEvent =
@@ -89,7 +91,9 @@ type PluginEvent =
     | 'before:highlightBlock'
     | 'after:highlightBlock'
 
-type HLJSPlugin = { [K in PluginEvent]? : any }
+type HLJSPlugin = {
+    [K in PluginEvent]? : any
+}
 
 interface EmitterConstructor {
     new (opts: any): Emitter
@@ -209,4 +213,23 @@ interface ModeDetails {
     // parsed
     subLanguage?: string | string[]
     compiled?: boolean
+}
+
+// deprecated API since v10
+// declare module 'highlight.js/lib/highlight.js';
+
+declare module 'highlight.js' {
+    export = hljs;
+}
+
+declare module 'highlight.js/lib/core' {
+    export = hljs;
+}
+
+declare module 'highlight.js/lib/core.js' {
+    export = hljs;
+}
+
+declare module 'highlight.js/lib/languages/*' {
+    export default function(hljs?: HLJSApi): LanguageDetail;
 }

@@ -1,5 +1,5 @@
-import * as regex from './regex';
-import { inherit } from './utils';
+import * as regex from './regex.js';
+import { inherit } from './utils.js';
 
 // keywords that should have no default relevance value
 var COMMON_KEYWORDS = 'of and for in not or if then'.split(' ');
@@ -140,6 +140,10 @@ export function compileLanguage(language) {
       matcher.compile();
       this.multiRegexes[index] = matcher;
       return matcher;
+    }
+
+    resumingScanAtSamePosition() {
+      return this.regexIndex != 0;
     }
 
     considerAll() {
